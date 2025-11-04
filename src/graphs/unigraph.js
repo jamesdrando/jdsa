@@ -1,19 +1,26 @@
 /**
- * Unidirected Graph Implementation
+ * Unidirectional Graph Implementation
  * 
- * This class represents a unidirected graph using an adjacency list.
- * It provides methods to add and remove nodes and edges, check for node existence,
- * retrieve neighbors, and check adjacency between nodes.
+ * This class represents a unidirected graph using a hash map to store nodes  
+ * and their adjacency lists.
+ * 
+ * @methods
+ * addNode(node): Adds a node to the graph.  
+ * hasNode(node): Checks if a node exists in the graph.  
+ * removeNode(node): Removes a node and its associated edges from the graph.  
+ * addEdge(node1, node2): Adds a directed edge from node1 to node2.  
+ * hasEdge(node1, node2): Checks if a directed edge from node1 to node2 exists.  
+ * removeEdge(node1, node2): Removes the directed edge from node1 to node2.  
+ * neighbors(node): Returns the list of neighbors for a given node.  
+ * adjacent(node1, node2): Checks if node1 and node2 are adjacent.  
  */
-class UnidirectedGraph {
+class UniGraph{
   constructor() {
-    this.nodes = new Set();
-    this.adjacencyList = {};
+    this.nodes = new Map()
   }
 
   addNode(node) {
-    this.nodes.add(node);
-    this.adjacencyList[node] = [];
+    this.nodes.set(node, []);
   } 
 
   hasNode(node) {
@@ -22,13 +29,12 @@ class UnidirectedGraph {
 
   removeNode(node) {
     if (this.nodes.has(node)) {  
-      for (let neighbor in this.adjacencyList) {
-        this.adjacencyList[neighbor] = this.adjacencyList[neighbor].filter(
+      for (let neighbor in this.nodes.get(node)) {
+        this.nodes.set(neighbor, this.nodes.get(neighbor).filter(
           (n) => n !== node
-        );
-      }
+        ));
+      };
       this.nodes.delete(node);
-      delete this.adjacencyList[node];
     } else {
       throw new Error("Node not found in the graph");
     }
@@ -36,8 +42,7 @@ class UnidirectedGraph {
 
   addEdge(node1, node2) { 
     if (this.nodes.has(node1) && this.nodes.has(node2)) {
-      this.adjacencyList[node1].push(node2);
-      this.adjacencyList[node2].push(node1);
+      this.nodes.get(node1).push(node2);
     } else {
       throw new Error("One or both nodes not found in the graph");
     }
@@ -45,7 +50,7 @@ class UnidirectedGraph {
 
   hasEdge(node1, node2) {
     if (this.nodes.has(node1) && this.nodes.has(node2)) {
-      return this.adjacencyList[node1].includes(node2);
+      return this.nodes.get(node1).includes(node2);
     } else {
       throw new Error("One or both nodes not found in the graph");
     }
@@ -53,12 +58,9 @@ class UnidirectedGraph {
 
   removeEdge(node1, node2) {
     if (this.nodes.has(node1) && this.nodes.has(node2)) {
-      this.adjacencyList[node1] = this.adjacencyList[node1].filter(
+      this.nodes.set(node1) = this.nodes.get(node1).filter(
         (neighbor) => neighbor !== node2
       );
-      this.adjacencyList[node2] = this.adjacencyList[node2].filter(
-        (neighbor) => neighbor !== node1
-      ); 
     } else {
       throw new Error("One or both nodes not found in the graph");
     }
@@ -66,7 +68,7 @@ class UnidirectedGraph {
 
   neighbors(node) {
     if (this.nodes.has(node)) {
-      return this.adjacencyList[node];
+      return this.nodes.get(node);
     } else {
       throw new Error("Node not found in the graph");
     }
@@ -74,7 +76,7 @@ class UnidirectedGraph {
 
   adjacent(node1, node2) {
     if (this.nodes.has(node1) && this.nodes.has(node2)) {
-      return this.adjacencyList[node1].includes(node2);
+      return this.nodes.get(node1).includes(node2);
     } else {
       throw new Error("One or both nodes not found in the graph");
     }
